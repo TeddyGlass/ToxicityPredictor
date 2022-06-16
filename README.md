@@ -8,6 +8,9 @@ conda install -y -f conda_requirements.txt
 ```
 # Usage
 ```
+git clone https://github.com/TeddyGlass/ToxicityPredictor.git
+```
+```
 python toxicity_predictor.py user_email user_password absolute_path_to_sdf --headless
 ```
 If not use option ```--headless```, the chrome GUI starts up.
