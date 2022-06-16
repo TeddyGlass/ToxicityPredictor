@@ -14,9 +14,19 @@ from utils import user_email, user_paswd, data
 def tox_pred(user_email, user_paswd, data):
     # global driver
     url_login = 'http://mmi-03.my-pharm.ac.jp/tox1/users/sign_in'
-    # setup
-    driver = webdriver.Chrome(ChromeDriverManager().install())
+    # setup driver
+    default_download_dir = '/'.join(data.split('/')[:-1])
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option(
+        "prefs",
+        {"download.default_directory": default_download_dir}
+        )
+    driver = webdriver.Chrome(
+        ChromeDriverManager().install(),
+        options=options
+        )
     wait = WebDriverWait(driver=driver, timeout=10800)
+    # scraping
     try:
         driver.get(url_login)
         # get login form
@@ -47,6 +57,7 @@ def tox_pred(user_email, user_paswd, data):
             if tag['class'][-1] ==  'mx-2':
                 time.sleep(1)
                 driver.find_element_by_id('download-sdf-button').click()
+                driver.find_element_by_id('download-button').click()
                 break
     finally:
         os.kill(driver.service.process.pid,signal.SIGTERM)
@@ -54,3 +65,4 @@ def tox_pred(user_email, user_paswd, data):
 
 if __name__ == '__main__':
     tox_pred(user_email, user_paswd, data)
+    # print('/'.join(data.split('/')[:-1]))
