@@ -7,16 +7,18 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from utils import user_email, user_paswd, data
+import argparse
 
 
-def tox_pred(user_email, user_paswd, data):
+def tox_pred(user_email, user_paswd, data, headless):
     # global driver
     url_login = 'http://mmi-03.my-pharm.ac.jp/tox1/users/sign_in'
     # setup driver
     default_download_dir = '/'.join(data.split('/')[:-1])
     options = webdriver.ChromeOptions()
+    if headless:
+        options.add_argument('--headless')
     options.add_experimental_option(
         "prefs",
         {"download.default_directory": default_download_dir}
@@ -49,6 +51,7 @@ def tox_pred(user_email, user_paswd, data):
         btm_predict.click()
         # getr html
         wait.until(EC.presence_of_all_elements_located)
+        print('calculating optimal 3D structure .....')
         for _ in range(10800):
             time.sleep(1)    
             html = driver.page_source
@@ -64,5 +67,11 @@ def tox_pred(user_email, user_paswd, data):
     
 
 if __name__ == '__main__':
-    tox_pred(user_email, user_paswd, data)
-    # print('/'.join(data.split('/')[:-1]))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('user_email')
+    parser.add_argument('user_paswd')
+    parser.add_argument('sdf_path')
+    parser.add_argument('--headless', action='store_true')
+    args = parser.parse_args()
+
+    tox_pred(args.user_email, args.user_paswd, args.sdf_path, args.headless)
